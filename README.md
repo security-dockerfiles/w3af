@@ -3,7 +3,7 @@
 Clone repo and build image:
 
 ```
-git clone https://github.com/ilyaglow/w3af-docker
+git clone https://github.com/ilyaglow/w3af-docker.git
 docker build -t my-w3af-docker .
 ```
 
