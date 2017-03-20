@@ -30,6 +30,9 @@ RUN pip install clamd==1.0.1 PyGithub==1.21.0 GitPython==0.3.2.RC1 pybloomfilter
 # Add the w3af user with home folder
 RUN useradd w3af -m
 
+# Switch to non-privileged user
+USER w3af
+
 # Clone w3af from official repo
 RUN git clone https://github.com/andresriancho/w3af.git /home/w3af/w3af
 
@@ -37,8 +40,5 @@ RUN git clone https://github.com/andresriancho/w3af.git /home/w3af/w3af
 # The approach of checking exact versions of packages feels wrong tbh
 # RUN sed 's/    dependency_check()/    # dependency_check()/g' -i /home/w3af/w3af/w3af_api
 # RUN sed 's/dependency_check()/# dependency_check()/g' -i /home/w3af/w3af/w3af_console
-
-# Switch to non-privileged user
-USER w3af
 
 WORKDIR /home/w3af/w3af
