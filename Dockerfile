@@ -35,7 +35,7 @@ RUN pip install \
   esmre==0.3.1 \
   Flask==0.10.1 \
   futures==2.1.5 \
-  GitPython==0.3.2.RC1 \
+  GitPython==2.1.3 \
   guess-language==0.2 \
   halberd==0.2.4 \
   Jinja2==2.7.3 \
@@ -69,12 +69,6 @@ RUN useradd w3af -m
 # Switch to non-privileged user
 USER w3af
 
-# Clone w3af from official repo
-RUN git clone https://github.com/andresriancho/w3af.git /home/w3af/w3af
-
-# You can comment out runtime check for dependencies if w3af complaining about it
-# The approach of checking exact versions of packages feels wrong tbh
-# RUN sed 's/    dependency_check()/    # dependency_check()/g' -i /home/w3af/w3af/w3af_api
-# RUN sed 's/dependency_check()/# dependency_check()/g' -i /home/w3af/w3af/w3af_console
-
 WORKDIR /home/w3af/w3af
+
+CMD ./w3af_console -n
