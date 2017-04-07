@@ -17,6 +17,8 @@ docker build -t my-w3af .
 
 ## Console version
 
+*NOTE*: w3af console has issues on alpine
+
 ```
 docker run -it -v /home/username/w3af-share:/home/w3af/share my-w3af ./w3af_console
 ```

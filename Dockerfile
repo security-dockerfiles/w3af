@@ -2,26 +2,27 @@
 # https://github.com/andresriancho/w3af/blob/master/extras/docker/Dockerfile
 #
 # It does NOT include gtk packages for gui version
-FROM ubuntu:16.04
-
-# Update before installing any package
-RUN apt-get update -y && apt-get upgrade -y
+FROM alpine:latest
+LABEL maintainer "ilya@ilyaglotov.com"
 
 # Install basic requirements, python-lxml because it doesn't compile correctly from pip
-RUN apt-get update && apt-get install -y \
-  build-essential \
-  ca-certificates \
+RUN apk update && apk add \
+  build-base \
+  python \
+  python-dev \
+  py-pip \
+  py-lxml \
+  py-setuptools \
+  py-pillow \
   git \
   libffi-dev \
-  libsqlite3-dev \
-  libssl-dev \
+  sqlite-dev \
+  openssl-dev \
   libxml2-dev \
-  libxslt1-dev \
-  libyaml-dev \
-  python-dev \
-  python-lxml \
-  python-pip \
-  xdot
+  libxslt-dev \
+  yaml-dev \
+  linux-headers \
+&& rm -rf /var/cache/apk/*
 
 # Get and install pip
 RUN pip install --upgrade pip
@@ -62,9 +63,8 @@ RUN pip install \
   tldextract==1.7.2 \
   vulndb==0.0.19
 
-
 # Add the w3af user with home folder
-RUN useradd w3af -m
+RUN adduser -D w3af
 
 # Switch to non-privileged user
 USER w3af
@@ -72,9 +72,6 @@ USER w3af
 # Clone w3af from official repo
 RUN git clone https://github.com/andresriancho/w3af.git /home/w3af/w3af
 
-# You can comment out runtime check for dependencies if w3af complaining about it
-# The approach of checking exact versions of packages feels wrong tbh
-# RUN sed 's/    dependency_check()/    # dependency_check()/g' -i /home/w3af/w3af/w3af_api
-# RUN sed 's/dependency_check()/# dependency_check()/g' -i /home/w3af/w3af/w3af_console
-
 WORKDIR /home/w3af/w3af
+
+CMD ./w3af_console --no-update
