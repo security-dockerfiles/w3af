@@ -61,7 +61,8 @@ RUN pip install \
   tblib==0.2.0 \
   termcolor \
   tldextract==1.7.2 \
-  vulndb==0.0.19
+  vulndb==0.0.19 \
+&& rm -rf /root/.cache/pip
 
 # Add the w3af user with home folder
 RUN adduser -D w3af
@@ -70,8 +71,15 @@ RUN adduser -D w3af
 USER w3af
 
 # Clone w3af from official repo
-RUN git clone https://github.com/andresriancho/w3af.git /home/w3af/w3af
+RUN git clone --depth=1 --branch=master https://github.com/andresriancho/w3af.git /home/w3af/w3af
 
+# Clean up a bit
+USER root
+RUN apk del build-base \
+  linux-headers \
+  git \
+&& rm -rf /home/w3af/w3af/.git
+
+# Prepare the startup
+USER w3af
 WORKDIR /home/w3af/w3af
-
-CMD ./w3af_console --no-update
