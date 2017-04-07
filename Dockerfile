@@ -2,7 +2,7 @@
 # https://github.com/andresriancho/w3af/blob/master/extras/docker/Dockerfile
 #
 # It does NOT include gtk packages for gui version
-FROM ubuntu:16.04
+FROM ubuntu:latest
 
 # Update before installing any package
 RUN apt-get update -y && apt-get upgrade -y
@@ -21,7 +21,7 @@ RUN apt-get update && apt-get install -y \
   python-dev \
   python-lxml \
   python-pip \
-  xdot
+&& rm -rf /var/lib/apt/lists/*
 
 # Get and install pip
 RUN pip install --upgrade pip
@@ -60,8 +60,8 @@ RUN pip install \
   tblib==0.2.0 \
   termcolor \
   tldextract==1.7.2 \
-  vulndb==0.0.19
-
+  vulndb==0.0.19 \
+&& rm -rf /root/.cache/pip
 
 # Add the w3af user with home folder
 RUN useradd w3af -m
@@ -70,11 +70,21 @@ RUN useradd w3af -m
 USER w3af
 
 # Clone w3af from official repo
-RUN git clone https://github.com/andresriancho/w3af.git /home/w3af/w3af
+RUN git clone --depth=1 --branch=master https://github.com/andresriancho/w3af.git /home/w3af/w3af
+
+# Clean up a bit
+USER root
+RUN apt-get purge -y build-essential \
+  git \
+  && apt -y autoremove \
+  && rm -rf /home/w3af/w3af/.git \
+  && rm -rf /var/lib/apt/lists/*
+
+# Prepare the startup
+USER w3af
+WORKDIR /home/w3af/w3af
 
 # You can comment out runtime check for dependencies if w3af complaining about it
 # The approach of checking exact versions of packages feels wrong tbh
 # RUN sed 's/    dependency_check()/    # dependency_check()/g' -i /home/w3af/w3af/w3af_api
 # RUN sed 's/dependency_check()/# dependency_check()/g' -i /home/w3af/w3af/w3af_console
-
-WORKDIR /home/w3af/w3af
