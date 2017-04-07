@@ -74,9 +74,7 @@ RUN git clone --depth=1 --branch=master https://github.com/andresriancho/w3af.gi
 
 # Clean up a bit
 USER root
-RUN apt-get purge -y build-essential \
-  git \
-  && apt -y autoremove \
+RUN apt -y autoremove \
   && rm -rf /home/w3af/w3af/.git \
   && rm -rf /var/lib/apt/lists/*
 
