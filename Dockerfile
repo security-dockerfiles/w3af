@@ -2,14 +2,10 @@
 # https://github.com/andresriancho/w3af/blob/master/extras/docker/Dockerfile
 #
 # It does NOT include gtk packages for gui version
-FROM ubuntu:latest
-
-# Update before installing any package
-RUN apt-get update -y && apt-get upgrade -y
+FROM bitnami/minideb
 
 # Install basic requirements, python-lxml because it doesn't compile correctly from pip
-RUN apt-get update && apt-get install -y \
-  build-essential \
+RUN install_packages build-essential \
   ca-certificates \
   git \
   libffi-dev \
@@ -20,8 +16,7 @@ RUN apt-get update && apt-get install -y \
   libyaml-dev \
   python-dev \
   python-lxml \
-  python-pip \
-&& rm -rf /var/lib/apt/lists/*
+  python-pip 
 
 # Get and install pip
 RUN pip install --upgrade pip
@@ -70,19 +65,9 @@ RUN useradd w3af -m
 USER w3af
 
 # Clone w3af from official repo
-RUN git clone --depth=1 --branch=master https://github.com/andresriancho/w3af.git /home/w3af/w3af
-
-# Clean up a bit
-USER root
-RUN apt -y autoremove \
-  && rm -rf /home/w3af/w3af/.git \
-  && rm -rf /var/lib/apt/lists/*
+RUN git clone --depth=1 --branch=master https://github.com/andresriancho/w3af.git /home/w3af/w3af \
+&& rm -rf /home/w3af/w3af/.git
 
 # Prepare the startup
 USER w3af
 WORKDIR /home/w3af/w3af
-
-# You can comment out runtime check for dependencies if w3af complaining about it
-# The approach of checking exact versions of packages feels wrong tbh
-# RUN sed 's/    dependency_check()/    # dependency_check()/g' -i /home/w3af/w3af/w3af_api
-# RUN sed 's/dependency_check()/# dependency_check()/g' -i /home/w3af/w3af/w3af_console
