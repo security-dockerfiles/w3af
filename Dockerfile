@@ -69,5 +69,4 @@ RUN git clone --depth=1 --branch=master https://github.com/andresriancho/w3af.gi
 && rm -rf /home/w3af/w3af/.git
 
 # Prepare the startup
-USER w3af
 WORKDIR /home/w3af/w3af
