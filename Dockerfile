@@ -63,15 +63,16 @@ RUN pip install --upgrade pip \
 # Add the w3af user with home folder
 RUN useradd w3af -m
 
-# Switch to non-privileged user
-USER w3af
-
 # Clone w3af from official repo
 RUN git clone --depth=1 \
               --branch=master \
               https://github.com/andresriancho/w3af.git /home/w3af/w3af \
   && rm -rf /home/w3af/w3af/.git \
-  && apt-get purge -y git
+  && apt-get purge -y git \
+  && chown -R w3af /home/w3af/w3af
+
+# Switch to non-privileged user
+USER w3af
 
 # Prepare the startup
 WORKDIR /home/w3af/w3af
