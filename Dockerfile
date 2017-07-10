@@ -57,7 +57,8 @@ RUN pip install --upgrade pip \
     termcolor \
     tldextract==1.7.2 \
     vulndb==0.0.19 \
-  && rm -rf /root/.cache/pip
+  && rm -rf /root/.cache/pip \
+  && apt-get purge -y build-essential
 
 # Add the w3af user with home folder
 RUN useradd w3af -m
@@ -67,7 +68,6 @@ RUN git clone --depth=1 \
               --branch=master \
               https://github.com/andresriancho/w3af.git /home/w3af/w3af \
   && rm -rf /home/w3af/w3af/.git \
-  && apt-get purge -y git \
   && apt autoremove -y \
   && chown -R w3af /home/w3af/w3af
 
